@@ -1,7 +1,5 @@
 # useoutlinekit
 
-> ⚠️ **Experimental** — This package is in active development. APIs may change between versions. DYOR.
-
 X-ray vision for your website's design DNA.
 
 **[Landing Page →](https://dragoon0x.github.io/outlinekit)**
