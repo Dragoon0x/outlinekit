@@ -1,0 +1,78 @@
+{
+  "name": "useoutlinekit",
+  "version": "1.0.0",
+  "description": "X-ray vision for your website's design DNA. One component renders grid lines, spacing rhythm, type scale, color palette, component boundaries, and accessibility markers.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "design-system",
+    "blueprint",
+    "x-ray",
+    "grid",
+    "typography",
+    "spacing",
+    "color-palette",
+    "accessibility",
+    "devtools",
+    "ai-agent",
+    "visualization",
+    "experimental"
+  ],
+  "author": {
+    "name": "dragoon0x",
+    "url": "https://github.com/dragoon0x"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dragoon0x/outlinekit"
+  },
+  "homepage": "https://dragoon0x.github.io/outlinekit",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "contributors": [
+    {
+      "name": "dragoon0x",
+      "url": "https://github.com/dragoon0x"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/dragoon0x/outlinekit/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/dragoon0x"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

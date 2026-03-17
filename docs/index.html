@@ -1,0 +1,351 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OutlineKit — X-ray vision for your website's design DNA</title>
+<meta name="description" content="useoutlinekit: One component scans your page and extracts fonts, type scale, colors, spacing, grid, and accessibility issues.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fff;--bg2:#fafafa;--bg3:#f5f5f5;--border:#e8e8e8;--border2:#d4d4d4;--text:#171717;--text2:#525252;--text3:#737373;--text4:#a3a3a3;--green:#16a34a;--amber:#ca8a04;--red:#dc2626;--blue:#2563eb;--font:'Inter',system-ui,sans-serif;--mono:ui-monospace,'SF Mono','Fira Code',monospace}
+html{scroll-behavior:smooth;font-size:15px}body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;-webkit-font-smoothing:antialiased}
+::selection{background:#dbeafe}a{color:var(--text);text-decoration:underline;text-decoration-color:var(--border2);text-underline-offset:2px}a:hover{text-decoration-color:var(--text)}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}@media(max-width:860px){.layout{grid-template-columns:1fr}}
+.sidebar{border-right:1px solid var(--border);padding:24px 20px;position:sticky;top:0;height:100vh;overflow-y:auto;font-size:13px}@media(max-width:860px){.sidebar{display:none}}
+.sidebar .logo{font-weight:600;font-size:14px;color:var(--text);margin-bottom:24px;display:block;text-decoration:none}.sidebar .logo span{color:var(--text4);font-weight:400;font-size:12px;margin-left:4px}
+.sidebar nav a{display:block;padding:4px 0;color:var(--text3);text-decoration:none;transition:color .1s}.sidebar nav a:hover{color:var(--text)}.sidebar nav a.active{color:var(--text);font-weight:500}
+.sidebar .sep{font-size:11px;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-top:20px;margin-bottom:6px;padding-top:16px;border-top:1px solid var(--border)}.sidebar .sep:first-of-type{border-top:none;margin-top:16px}
+.main{padding:32px 40px 100px;max-width:720px}@media(max-width:860px){.main{padding:24px 20px 80px}}
+.main h1{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1.3;margin-bottom:16px}
+.main h2{font-size:18px;font-weight:600;margin-top:48px;margin-bottom:12px;scroll-margin-top:24px}
+.main p{margin-bottom:16px;color:var(--text2)}.main strong{color:var(--text);font-weight:600}
+.main ul{margin-bottom:16px;padding-left:24px;color:var(--text2)}.main li{margin-bottom:4px}
+.main hr{border:none;height:1px;background:var(--border);margin:40px 0}
+code{font-family:var(--mono);font-size:.9em;background:var(--bg3);padding:1.5px 5px;border-radius:3px}
+kbd{display:inline-block;padding:1px 6px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;font-family:var(--mono);font-size:.8em;font-weight:500;line-height:1.7}
+.install{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 16px;font-family:var(--mono);font-size:13px;cursor:pointer;transition:border-color .15s;margin-bottom:24px}.install:hover{border-color:var(--text)}
+.demo{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0 24px;background:var(--bg)}
+.demo-bar{padding:8px 12px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--text4);display:flex;justify-content:space-between;align-items:center;background:var(--bg2)}.demo-bar .live{color:var(--blue);font-weight:500}
+.demo-body{position:relative;min-height:200px;padding:20px}
+.demo-foot{padding:8px 12px;border-top:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--text3);background:var(--bg2)}.demo-foot .dt{font-weight:600;color:var(--blue)}
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px}.mc h3{font-size:14px;font-weight:600;margin-bottom:2px}.mc p{font-size:12px;color:var(--text3);margin:0}
+.mbtn{display:inline-block;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;font-family:var(--font);margin-right:4px;margin-top:4px}.mbtn.pr{background:var(--text);color:var(--bg)}.mbtn.sc{background:var(--bg);border:1px solid var(--border);color:var(--text2)}
+.mnav{display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:10px;font-size:12px;font-weight:500}.mnav a{color:var(--text4);text-decoration:none;cursor:default;padding-bottom:6px}.mnav a.on{color:var(--text);border-bottom:2px solid var(--text)}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);border-radius:10px 10px 0 0;overflow-x:auto}.tab{padding:8px 12px;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;border:none;background:none;font-family:var(--font);border-bottom:2px solid transparent;white-space:nowrap}.tab:hover{color:var(--text2)}.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.out-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0 24px}
+.out-block{background:#1a1a1a;position:relative}.out-copy{position:absolute;top:8px;right:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#888;padding:3px 10px;border-radius:4px;font-size:10px;font-family:var(--mono);cursor:pointer;z-index:2}.out-copy:hover{background:rgba(255,255,255,.12);color:#ccc}
+.out-body{padding:14px;font-family:var(--mono);font-size:11.5px;line-height:1.8;color:#999;white-space:pre-wrap;min-height:200px;max-height:500px;overflow-y:auto}
+.ow{color:#e5e5e5;font-weight:600}.og{color:#86efac}.or{color:#fca5a5}.oa{color:#fde68a}.os{color:#c4b5fd}.ob{color:#93c5fd}
+.kb{width:100%;border-collapse:collapse;margin:8px 0 24px;font-size:13px}.kb td{padding:6px 0;border-bottom:1px solid var(--border);color:var(--text2)}.kb td:first-child{font-family:var(--mono);font-size:11px;color:var(--text);font-weight:500;width:200px}
+.cbl{background:#1a1a1a;border-radius:8px;overflow:hidden;margin:12px 0 24px}.cbl-h{padding:8px 12px;border-bottom:1px solid #333;font-family:var(--mono);font-size:11px;color:#666;display:flex;align-items:center;gap:8px}.cbl-h .d{display:flex;gap:4px}.cbl-h .d i{width:8px;height:8px;border-radius:50%;display:block}.cbl-h .d i:nth-child(1){background:#f87171}.cbl-h .d i:nth-child(2){background:#facc15}.cbl-h .d i:nth-child(3){background:#4ade80}
+.cbl pre{padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.7;overflow-x:auto;color:#d4d4d4}.ckw{color:#c4b5fd}.cstr{color:#86efac}.cfn{color:#93c5fd}.ctag{color:#fca5a5}.cattr{color:#fde68a}
+.layer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 24px}@media(max-width:600px){.layer-grid{grid-template-columns:repeat(2,1fr)}}
+.layer-card{border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:default;transition:border-color .15s}.layer-card:hover{border-color:var(--blue)}.layer-card .icon{font-size:22px;margin-bottom:4px}.layer-card .name{font-size:12px;font-weight:600;color:var(--text)}.layer-card .desc{font-size:10px;color:var(--text3);margin-top:2px}
+.swatch-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 16px}.swatch{width:36px;height:36px;border-radius:6px;border:1px solid var(--border);position:relative;cursor:default}.swatch:hover .stip{opacity:1}.stip{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:2px 6px;border-radius:3px;font-family:var(--mono);font-size:9px;white-space:nowrap;opacity:0;transition:opacity .1s;z-index:5;pointer-events:none}
+.ts-row{display:flex;align-items:baseline;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)}.ts-size{font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:600;width:50px;flex-shrink:0}.ts-sample{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ts-count{font-family:var(--mono);font-size:10px;color:var(--text4);margin-left:auto;flex-shrink:0}
+.sp-bar{display:flex;align-items:center;gap:8px;padding:4px 0}.sp-val{font-family:var(--mono);font-size:11px;color:var(--text);font-weight:500;width:40px}.sp-fill{height:16px;border-radius:3px;background:var(--blue);opacity:.15;transition:width .3s}.sp-count{font-family:var(--mono);font-size:10px;color:var(--text4)}
+.a11y-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}.a11y-icon{font-size:14px;flex-shrink:0}.a11y-msg{color:var(--text2);flex:1}.a11y-sel{font-family:var(--mono);font-size:10px;color:var(--text4)}
+footer{padding:32px 40px;border-top:1px solid var(--border);font-size:12px;color:var(--text4)}footer a{color:var(--text3)}@media(max-width:860px){footer{padding:24px 20px}}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <a href="#" class="logo">outlinekit<span>v1.0</span></a>
+  <nav>
+    <a href="#" class="active">Overview</a>
+    <a href="#layers">Layers</a>
+    <a href="#typography">Typography</a>
+    <a href="#colors">Colors</a>
+    <a href="#spacing">Spacing</a>
+    <a href="#a11y">Accessibility</a>
+    <a href="#output">Output</a>
+    <div class="sep">Usage</div>
+    <a href="#install">Install</a>
+    <a href="#props">Props</a>
+    <a href="#types">Types</a>
+    <a href="#programmatic">Programmatic API</a>
+    <a href="#shortcuts">Shortcuts</a>
+    <div class="sep">Resources</div>
+    <a href="https://github.com/dragoon0x/outlinekit">GitHub</a>
+    <a href="https://www.npmjs.com/package/useoutlinekit">npm</a>
+  </nav>
+</aside>
+<main class="main">
+<h1>X-ray vision for your website's design DNA.</h1>
+<div class="install" onclick="navigator.clipboard.writeText('npm i useoutlinekit').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='npm i useoutlinekit',1500)})"><code style="background:none;padding:0">npm i useoutlinekit</code></div>
+<p>Drop one React component. It scans your entire page and extracts fonts, type scale, colors, spacing rhythm, grid columns, component boundaries, and accessibility issues. Copy the output into Claude Code, Cursor, or any AI tool.</p>
+
+<p>Click the button below to scan this page right now:</p>
+<div style="margin:12px 0 24px"><button id="scanBtn" onclick="scanPage()" style="padding:10px 24px;border-radius:8px;border:1px solid var(--blue);background:var(--blue);color:#fff;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;transition:opacity .15s">◎ Outline this page</button><span id="scanSt" style="margin-left:12px;font-size:12px;color:var(--text3)"></span></div>
+<div id="scanResults" style="display:none"></div>
+
+<hr>
+<h2 id="layers">Six layers of insight</h2>
+<p>Each layer reveals a different dimension of your design system. Toggle them individually or scan everything at once.</p>
+<div class="layer-grid">
+  <div class="layer-card"><div class="icon">▦</div><div class="name">Grid</div><div class="desc">Column positions, alignment edges</div></div>
+  <div class="layer-card"><div class="icon">Aa</div><div class="name">Typography</div><div class="desc">Fonts, sizes, type scale</div></div>
+  <div class="layer-card"><div class="icon">●</div><div class="name">Colors</div><div class="desc">Text, background, border palette</div></div>
+  <div class="layer-card"><div class="icon">↔</div><div class="name">Spacing</div><div class="desc">Padding, margin, rhythm</div></div>
+  <div class="layer-card"><div class="icon">◻</div><div class="name">Components</div><div class="desc">React names, boundaries, depth</div></div>
+  <div class="layer-card"><div class="icon">♿</div><div class="name">Accessibility</div><div class="desc">Missing alt, labels, contrast</div></div>
+</div>
+
+<hr>
+<h2 id="typography">Typography extraction</h2>
+<p>OutlineKit finds every font family and size used on your page, counts how many elements use each, and captures a sample text snippet. Here's what it finds on a typical dashboard:</p>
+<div class="demo">
+  <div class="demo-bar"><span>Design DNA → Typography</span><span class="live">Live scan</span></div>
+  <div class="demo-body" style="padding:16px">
+    <div style="font-size:12px;color:var(--text4);margin-bottom:10px;font-family:var(--mono);letter-spacing:.5px">TYPE SCALE</div>
+    <div class="ts-row"><span class="ts-size">28px</span><span class="ts-sample" style="font-size:28px;font-weight:600">X-ray vision for your website</span><span class="ts-count">×1</span></div>
+    <div class="ts-row"><span class="ts-size">18px</span><span class="ts-sample" style="font-size:18px;font-weight:600">Six layers of insight</span><span class="ts-count">×8</span></div>
+    <div class="ts-row"><span class="ts-size">15px</span><span class="ts-sample" style="font-size:15px">Drop one React component. It scans…</span><span class="ts-count">×42</span></div>
+    <div class="ts-row"><span class="ts-size">14px</span><span class="ts-sample" style="font-size:14px;font-weight:600">Monthly Revenue</span><span class="ts-count">×12</span></div>
+    <div class="ts-row"><span class="ts-size">13px</span><span class="ts-sample" style="font-size:13px;color:var(--text3)">npm install useoutlinekit -D</span><span class="ts-count">×18</span></div>
+    <div class="ts-row"><span class="ts-size">12px</span><span class="ts-sample" style="font-size:12px;color:var(--text3)">$124,500 — up 12% from last month</span><span class="ts-count">×24</span></div>
+    <div class="ts-row"><span class="ts-size">11px</span><span class="ts-sample" style="font-size:11px;font-family:var(--mono)">localhost:3000/dashboard</span><span class="ts-count">×16</span></div>
+    <div style="margin-top:12px;font-size:12px;color:var(--text4);font-family:var(--mono)">FONTS: <strong style="color:var(--text)">Inter</strong> (98%), <strong style="color:var(--text)">SF Mono</strong> (2%)</div>
+  </div>
+  <div class="demo-foot"><span class="dt">7 sizes</span> detected · 2 font families · baseline rhythm: 24px</div>
+</div>
+
+<hr>
+<h2 id="colors">Color palette extraction</h2>
+<p>Scans every element's <code>color</code>, <code>backgroundColor</code>, and <code>borderColor</code>. Groups them by usage type and counts occurrences.</p>
+<div class="demo">
+  <div class="demo-bar"><span>Design DNA → Colors</span><span class="live">Live scan</span></div>
+  <div class="demo-body" style="padding:16px">
+    <div style="font-size:12px;color:var(--text4);margin-bottom:8px;font-family:var(--mono);letter-spacing:.5px">TEXT COLORS</div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#171717"><div class="stip">#171717 ×84</div></div>
+      <div class="swatch" style="background:#525252"><div class="stip">#525252 ×42</div></div>
+      <div class="swatch" style="background:#737373"><div class="stip">#737373 ×18</div></div>
+      <div class="swatch" style="background:#a3a3a3"><div class="stip">#a3a3a3 ×12</div></div>
+      <div class="swatch" style="background:#2563eb"><div class="stip">#2563eb ×6</div></div>
+      <div class="swatch" style="background:#dc2626"><div class="stip">#dc2626 ×2</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text4);margin-bottom:8px;font-family:var(--mono);letter-spacing:.5px">BACKGROUNDS</div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#ffffff"><div class="stip">#ffffff ×32</div></div>
+      <div class="swatch" style="background:#fafafa"><div class="stip">#fafafa ×24</div></div>
+      <div class="swatch" style="background:#f5f5f5"><div class="stip">#f5f5f5 ×16</div></div>
+      <div class="swatch" style="background:#1a1a1a"><div class="stip">#1a1a1a ×8</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text4);margin-bottom:8px;font-family:var(--mono);letter-spacing:.5px">BORDERS</div>
+    <div class="swatch-row">
+      <div class="swatch" style="background:#e8e8e8"><div class="stip">#e8e8e8 ×40</div></div>
+      <div class="swatch" style="background:#d4d4d4"><div class="stip">#d4d4d4 ×8</div></div>
+    </div>
+  </div>
+  <div class="demo-foot"><span class="dt">12 unique colors</span> detected across 3 categories</div>
+</div>
+
+<hr>
+<h2 id="spacing">Spacing scale detection</h2>
+<p>Collects every padding and margin value, filters out noise, and reveals your actual spacing scale. Also detects baseline rhythm from vertical gaps between siblings.</p>
+<div class="demo">
+  <div class="demo-bar"><span>Design DNA → Spacing</span><span class="live">Live scan</span></div>
+  <div class="demo-body" style="padding:16px">
+    <div class="sp-bar"><span class="sp-val">4px</span><div class="sp-fill" style="width:60px"></div><span class="sp-count">×18</span></div>
+    <div class="sp-bar"><span class="sp-val">8px</span><div class="sp-fill" style="width:120px"></div><span class="sp-count">×36</span></div>
+    <div class="sp-bar"><span class="sp-val">12px</span><div class="sp-fill" style="width:140px"></div><span class="sp-count">×42</span></div>
+    <div class="sp-bar"><span class="sp-val">14px</span><div class="sp-fill" style="width:50px"></div><span class="sp-count">×14</span></div>
+    <div class="sp-bar"><span class="sp-val">16px</span><div class="sp-fill" style="width:100px"></div><span class="sp-count">×30</span></div>
+    <div class="sp-bar"><span class="sp-val">20px</span><div class="sp-fill" style="width:80px"></div><span class="sp-count">×24</span></div>
+    <div class="sp-bar"><span class="sp-val">24px</span><div class="sp-fill" style="width:70px"></div><span class="sp-count">×20</span></div>
+    <div class="sp-bar"><span class="sp-val">32px</span><div class="sp-fill" style="width:50px"></div><span class="sp-count">×14</span></div>
+    <div class="sp-bar"><span class="sp-val">40px</span><div class="sp-fill" style="width:30px"></div><span class="sp-count">×8</span></div>
+    <div class="sp-bar"><span class="sp-val">48px</span><div class="sp-fill" style="width:20px"></div><span class="sp-count">×6</span></div>
+    <div style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--text3)">Baseline rhythm: <strong style="color:var(--blue)">8px</strong> · Radii: <code>3px</code> <code>6px</code> <code>8px</code> <code>10px</code> <code>14px</code></div>
+  </div>
+  <div class="demo-foot"><span class="dt">10 spacing values</span> detected · 5 border-radius values</div>
+</div>
+
+<hr>
+<h2 id="a11y">Accessibility scanning</h2>
+<p>Checks every element for common issues: images without <code>alt</code> text, buttons without accessible names, inputs without labels, links without <code>href</code>, and text with low contrast ratio (below 4.5:1 WCAG AA).</p>
+<div class="demo">
+  <div class="demo-bar"><span>Design DNA → Accessibility</span><span class="live">Live scan</span></div>
+  <div class="demo-body" style="padding:16px">
+    <div class="a11y-item"><span class="a11y-icon">🔴</span><span class="a11y-msg"><strong>Image missing alt text</strong></span><span class="a11y-sel"><code>img.hero-bg</code></span></div>
+    <div class="a11y-item"><span class="a11y-icon">🔴</span><span class="a11y-msg"><strong>Button has no accessible name</strong></span><span class="a11y-sel"><code>button.icon-btn</code></span></div>
+    <div class="a11y-item"><span class="a11y-icon">🔴</span><span class="a11y-msg"><strong>Input missing label</strong></span><span class="a11y-sel"><code>input#search</code></span></div>
+    <div class="a11y-item"><span class="a11y-icon">🔴</span><span class="a11y-msg"><strong>Low contrast 2.3:1</strong> (needs 4.5:1)</span><span class="a11y-sel"><code>p.muted</code></span></div>
+    <div class="a11y-item"><span class="a11y-icon">🟡</span><span class="a11y-msg"><strong>Link missing href</strong></span><span class="a11y-sel"><code>a.nav-link</code></span></div>
+  </div>
+  <div class="demo-foot"><span class="dt">5 issues</span> found · 4 errors · 1 warning</div>
+</div>
+
+<hr>
+<h2 id="output">Output</h2>
+<p>The full Design DNA report in markdown. Copy it directly into your AI agent.</p>
+<div class="out-wrap">
+<div class="out-block"><button class="out-copy" onclick="navigator.clipboard.writeText(document.getElementById('dnaOut').textContent).then(()=>{this.textContent='✓ Copied';setTimeout(()=>this.textContent='⎘ Copy',1500)})">⎘ Copy</button>
+<div class="out-body" id="dnaOut"><span class="ow"># OutlineKit Design DNA Report</span>
+
+<span class="ow">186 elements</span> scanned on localhost:3000/dashboard
+Viewport: 1440×900
+
+<span class="ow">## Fonts</span>
+- <span class="ob">Inter</span> (172 elements) — sizes: 28px, 18px, 15px, 14px, 13px, 12px
+- <span class="ob">SF Mono</span> (14 elements) — sizes: 12.5px, 11px
+
+<span class="ow">## Type Scale</span>
+- <span class="og">`28px`</span> — 1 use — "X-ray vision for your website"
+- <span class="og">`18px`</span> — 8 uses — "Six layers of insight"
+- <span class="og">`15px`</span> — 42 uses — "Drop one React component…"
+- <span class="og">`14px`</span> — 12 uses — "Monthly Revenue"
+- <span class="og">`13px`</span> — 18 uses — "npm install useoutlinekit"
+- <span class="og">`12px`</span> — 24 uses — "$124,500 — up 12%"
+- <span class="og">`11px`</span> — 16 uses — "localhost:3000/dashboard"
+
+<span class="ow">## Colors</span>
+Text: <span class="os">`#171717`</span> (×84), <span class="os">`#525252`</span> (×42), <span class="os">`#737373`</span> (×18)
+Background: <span class="os">`#ffffff`</span> (×32), <span class="os">`#fafafa`</span> (×24), <span class="os">`#f5f5f5`</span> (×16)
+
+<span class="ow">## Spacing Scale</span>
+4px (×18) · 8px (×36) · 12px (×42) · 16px (×30) · 20px (×24) · 24px (×20) · 32px (×14) · 40px (×8)
+Baseline rhythm: 8px
+
+<span class="ow">## Border Radii</span>
+<span class="og">`8px`</span> (×40), <span class="og">`6px`</span> (×22), <span class="og">`10px`</span> (×14), <span class="og">`3px`</span> (×12), <span class="og">`14px`</span> (×4)
+
+<span class="ow">## Grid</span>
+Detected columns at: 0px, 220px, 260px, 680px, 720px
+
+<span class="ow">## Accessibility Issues (5)</span>
+<span class="or">🔴 Image missing alt text</span> — <span class="og">`img.hero-bg`</span>
+<span class="or">🔴 Button has no accessible name</span> — <span class="og">`button.icon-btn`</span>
+<span class="or">🔴 Input missing label</span> — <span class="og">`input#search`</span>
+<span class="or">🔴 Low contrast 2.3:1 (needs 4.5:1)</span> — <span class="og">`p.muted`</span>
+<span class="oa">🟡 Link missing href</span> — <span class="og">`a.nav-link`</span></div></div></div>
+
+<hr>
+<h2 id="install">Install</h2>
+<div class="cbl"><div class="cbl-h"><div class="d"><i></i><i></i><i></i></div><span>terminal</span></div><pre>npm install useoutlinekit -D</pre></div>
+<div class="cbl"><div class="cbl-h"><div class="d"><i></i><i></i><i></i></div><span>layout.tsx</span></div><pre><span class="ckw">import</span> { <span class="cfn">Outline</span> } <span class="ckw">from</span> <span class="cstr">'useoutlinekit'</span>
+
+<span class="ckw">function</span> <span class="cfn">App</span>() {
+  <span class="ckw">return</span> (
+    &lt;&gt;
+      &lt;<span class="ctag">YourApp</span> /&gt;
+      {process.env.NODE_ENV === <span class="cstr">"development"</span> &amp;&amp; &lt;<span class="ctag">Outline</span> /&gt;}
+    &lt;/&gt;
+  )
+}</pre></div>
+<ul>
+  <li><strong>React 18+</strong> — uses modern React features</li>
+  <li><strong>Client-side only</strong> — requires DOM access</li>
+  <li><strong>Zero dependencies</strong> — no runtime deps beyond React</li>
+  <li><strong>~5.7kb gzipped</strong> — tree-shakeable ESM and CJS</li>
+</ul>
+
+<hr>
+<h2 id="props">Props</h2>
+<p>All optional. Works with zero configuration.</p>
+<table class="kb">
+  <tr><td><code>enabled</code></td><td>Enable/disable (default: <code>true</code>)</td></tr>
+  <tr><td><code>layers</code></td><td>Array of active layers (default: all six)</td></tr>
+  <tr><td><code>root</code></td><td>CSS selector to scope scanning (default: <code>"body"</code>)</td></tr>
+  <tr><td><code>ignore</code></td><td>Tag names to skip (default: <code>[]</code>)</td></tr>
+  <tr><td><code>color</code></td><td>Overlay accent color (default: <code>"#2563eb"</code>)</td></tr>
+  <tr><td><code>toolbar</code></td><td>Show toolbar (default: <code>true</code>)</td></tr>
+  <tr><td><code>position</code></td><td>Toolbar corner (default: <code>"bottom-right"</code>)</td></tr>
+  <tr><td><code>onScan</code></td><td>Called after scan completes (receives <code>DesignDNA</code>)</td></tr>
+  <tr><td><code>onCopy</code></td><td>Called when copy clicked (receives markdown)</td></tr>
+  <tr><td><code>shortcut</code></td><td>Toggle shortcut (default: <code>"ctrl+shift+o"</code>)</td></tr>
+  <tr><td><code>className</code></td><td>Custom class for toolbar wrapper</td></tr>
+</table>
+
+<hr>
+<h2 id="types">Types</h2>
+<div class="cbl"><div class="cbl-h"><div class="d"><i></i><i></i><i></i></div><span>types</span></div><pre><span class="ckw">type</span> <span class="ctag">DesignDNA</span> = {
+  <span class="cattr">fonts</span>: { <span class="cattr">family</span>: <span class="cfn">string</span>; <span class="cattr">count</span>: <span class="cfn">number</span>; <span class="cattr">sizes</span>: <span class="cfn">string</span>[] }[]
+  <span class="cattr">typeScale</span>: { <span class="cattr">size</span>: <span class="cfn">string</span>; <span class="cattr">px</span>: <span class="cfn">number</span>; <span class="cattr">count</span>: <span class="cfn">number</span>; <span class="cattr">sample</span>: <span class="cfn">string</span> }[]
+  <span class="cattr">colors</span>: { <span class="cattr">value</span>: <span class="cfn">string</span>; <span class="cattr">property</span>: <span class="cstr">'color'</span>|<span class="cstr">'background'</span>|<span class="cstr">'border'</span>; <span class="cattr">count</span>: <span class="cfn">number</span> }[]
+  <span class="cattr">spacingScale</span>: { <span class="cattr">px</span>: <span class="cfn">number</span>; <span class="cattr">count</span>: <span class="cfn">number</span> }[]
+  <span class="cattr">radii</span>: { <span class="cattr">value</span>: <span class="cfn">string</span>; <span class="cattr">count</span>: <span class="cfn">number</span> }[]
+  <span class="cattr">elements</span>: <span class="ctag">ScannedElement</span>[]
+  <span class="cattr">gridColumns</span>: <span class="cfn">number</span>[]
+  <span class="cattr">baselineRhythm</span>: <span class="cfn">number</span> | <span class="cfn">null</span>
+  <span class="cattr">a11yIssues</span>: { <span class="cattr">selector</span>: <span class="cfn">string</span>; <span class="cattr">issue</span>: <span class="cfn">string</span>; <span class="cattr">severity</span>: <span class="cstr">'error'</span>|<span class="cstr">'warning'</span> }[]
+  <span class="cattr">meta</span>: { <span class="cattr">url</span>; <span class="cattr">title</span>; <span class="cattr">viewport</span>; <span class="cattr">elementCount</span>; <span class="cattr">timestamp</span> }
+}
+
+<span class="ckw">type</span> <span class="ctag">ScannedElement</span> = {
+  <span class="cattr">selector</span>: <span class="cfn">string</span>; <span class="cattr">tag</span>: <span class="cfn">string</span>
+  <span class="cattr">rect</span>: { <span class="cattr">x</span>; <span class="cattr">y</span>; <span class="cattr">width</span>; <span class="cattr">height</span> }
+  <span class="cattr">depth</span>: <span class="cfn">number</span>; <span class="cattr">component</span>: <span class="cfn">string</span>|<span class="cfn">null</span>; <span class="cattr">role</span>: <span class="cfn">string</span>
+}
+
+<span class="ckw">type</span> <span class="ctag">LayerType</span> = <span class="cstr">'grid'</span>|<span class="cstr">'typography'</span>|<span class="cstr">'colors'</span>|<span class="cstr">'spacing'</span>|<span class="cstr">'components'</span>|<span class="cstr">'a11y'</span></pre></div>
+
+<hr>
+<h2 id="programmatic">Programmatic API</h2>
+<div class="cbl"><div class="cbl-h"><div class="d"><i></i><i></i><i></i></div><span>script.ts</span></div><pre><span class="ckw">import</span> { <span class="cfn">scanDesignDNA</span>, <span class="cfn">formatDesignDNA</span> } <span class="ckw">from</span> <span class="cstr">'useoutlinekit'</span>
+
+<span style="color:#666">// Scan the page</span>
+<span class="ckw">const</span> dna = <span class="cfn">scanDesignDNA</span>(<span class="cstr">'body'</span>)
+
+<span style="color:#666">// Access structured data</span>
+console.log(dna.fonts)        <span style="color:#666">// → [{family: 'Inter', count: 172, sizes: [...]}]</span>
+console.log(dna.typeScale)    <span style="color:#666">// → [{size: '28px', px: 28, count: 1, sample: '...'}]</span>
+console.log(dna.colors)       <span style="color:#666">// → [{value: '#171717', property: 'color', count: 84}]</span>
+console.log(dna.spacingScale) <span style="color:#666">// → [{px: 8, count: 36}, {px: 12, count: 42}]</span>
+console.log(dna.a11yIssues)   <span style="color:#666">// → [{selector: '...', issue: '...', severity: 'error'}]</span>
+
+<span style="color:#666">// Generate markdown for agent</span>
+<span class="ckw">const</span> md = <span class="cfn">formatDesignDNA</span>(dna)
+<span style="color:#666">// → "# OutlineKit Design DNA Report\n186 elements..."</span></pre></div>
+<p><strong>Exports:</strong> <code>Outline</code>, <code>scanDesignDNA</code>, <code>formatDesignDNA</code>, <code>BlueprintOverlay</code></p>
+<p><strong>Type exports:</strong> <code>OutlineProps</code>, <code>OutlineState</code>, <code>LayerType</code>, <code>DesignDNA</code>, <code>ScannedElement</code></p>
+
+<hr>
+<h2 id="shortcuts">Keyboard shortcuts</h2>
+<table class="kb">
+  <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd></td><td>Toggle scan on/off</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Close overlay</td></tr>
+</table>
+<p style="font-size:12px;color:var(--text4)">~5.7kb gzipped · zero dependencies · React 18+ · MIT</p>
+</main></div>
+<footer><a href="https://github.com/dragoon0x/outlinekit">GitHub</a> · <a href="https://www.npmjs.com/package/useoutlinekit">npm</a></footer>
+<script>
+function scanPage(){
+  const btn=document.getElementById('scanBtn'),st=document.getElementById('scanSt'),res=document.getElementById('scanResults');
+  btn.textContent='Scanning...';btn.disabled=true;st.textContent='';
+  setTimeout(()=>{
+    const allEls=document.body.querySelectorAll('*');let ct=0;
+    const fontMap={},sizeMap={},colorMap={},spacingMap={},radiusMap={},a11y=[];
+    for(const el of allEls){
+      const cs=getComputedStyle(el);const r=el.getBoundingClientRect();
+      if(!r.width||!r.height||cs.display==='none')continue;ct++;
+      const ff=cs.fontFamily.split(',')[0].trim().replace(/['"]/g,'');
+      fontMap[ff]=(fontMap[ff]||0)+1;
+      const fs=cs.fontSize;sizeMap[fs]=(sizeMap[fs]||0)+1;
+      const c=cs.color;if(c&&c!=='rgba(0, 0, 0, 0)')colorMap[c]=(colorMap[c]||0)+1;
+      const bg=cs.backgroundColor;if(bg&&bg!=='rgba(0, 0, 0, 0)')colorMap[bg]=(colorMap[bg]||0)+1;
+      [cs.paddingTop,cs.paddingRight,cs.paddingBottom,cs.paddingLeft,cs.marginTop,cs.marginRight,cs.marginBottom,cs.marginLeft].forEach(v=>{const px=Math.round(parseFloat(v)||0);if(px>0&&px<200)spacingMap[px]=(spacingMap[px]||0)+1});
+      const br=cs.borderRadius;if(br&&br!=='0px')radiusMap[br]=(radiusMap[br]||0)+1;
+      if(el.tagName==='IMG'&&!el.getAttribute('alt'))a11y.push('Image missing alt: '+el.className);
+      if(el.tagName==='BUTTON'&&!el.textContent.trim()&&!el.getAttribute('aria-label'))a11y.push('Button no name: '+el.className);
+    }
+    const fonts=Object.entries(fontMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const sizes=Object.entries(sizeMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const colors=Object.entries(colorMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const spacing=Object.entries(spacingMap).sort((a,b)=>+a[0]- +b[0]).filter(([,c])=>c>=2).slice(0,12);
+    const radii=Object.entries(radiusMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    let h='<div style="border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px">';
+    h+='<div style="font-family:var(--mono);font-size:11px;color:var(--blue);font-weight:600;margin-bottom:12px">SCAN RESULTS — '+ct+' elements</div>';
+    h+='<div style="font-size:12px;margin-bottom:8px"><strong>Fonts:</strong> '+fonts.map(([f,c])=>f+' (×'+c+')').join(', ')+'</div>';
+    h+='<div style="font-size:12px;margin-bottom:8px"><strong>Sizes:</strong> '+sizes.map(([s,c])=>s+' (×'+c+')').join(', ')+'</div>';
+    h+='<div style="font-size:12px;margin-bottom:8px"><strong>Colors:</strong> '+colors.length+' unique</div>';
+    h+='<div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap">'+colors.map(([c])=>'<div style="width:24px;height:24px;border-radius:4px;border:1px solid var(--border);background:'+c+'"></div>').join('')+'</div>';
+    h+='<div style="font-size:12px;margin-bottom:8px"><strong>Spacing:</strong> '+spacing.map(([px,c])=>px+'px (×'+c+')').join(' · ')+'</div>';
+    h+='<div style="font-size:12px;margin-bottom:8px"><strong>Radii:</strong> '+radii.map(([r,c])=>r+' (×'+c+')').join(', ')+'</div>';
+    if(a11y.length)h+='<div style="font-size:12px;color:var(--red)"><strong>A11y issues:</strong> '+a11y.length+' found</div>';
+    else h+='<div style="font-size:12px;color:var(--green)"><strong>A11y:</strong> No issues found ✓</div>';
+    h+='</div>';
+    res.innerHTML=h;res.style.display='block';
+    btn.textContent='◎ Rescan';btn.disabled=false;
+    st.textContent='Done — '+ct+' elements, '+fonts.length+' fonts, '+colors.length+' colors';
+  },300);
+}
+</script>
+</body></html>
